@@ -4,9 +4,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/disgoorg/snowflake/v2"
-
 	"github.com/disgoorg/disgo/discord"
+	"github.com/disgoorg/snowflake/v2"
 )
 
 type SelfUserCache interface {
