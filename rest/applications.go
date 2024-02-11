@@ -69,7 +69,7 @@ func (s *applicationsImpl) GetGlobalCommands(applicationID snowflake.ID, withLoc
 
 func (s *applicationsImpl) GetGlobalCommand(applicationID snowflake.ID, commandID snowflake.ID, opts ...RequestOpt) (command discord.ApplicationCommand, err error) {
 	var unmarshalCommand discord.UnmarshalApplicationCommand
-	err = s.client.Do(GetGlobalCommand.Compile(nil, applicationID, commandID), nil, &command, opts...)
+	err = s.client.Do(GetGlobalCommand.Compile(nil, applicationID, commandID), nil, &unmarshalCommand, opts...)
 	if err == nil {
 		command = unmarshalCommand.ApplicationCommand
 	}
@@ -78,7 +78,7 @@ func (s *applicationsImpl) GetGlobalCommand(applicationID snowflake.ID, commandI
 
 func (s *applicationsImpl) CreateGlobalCommand(applicationID snowflake.ID, commandCreate discord.ApplicationCommandCreate, opts ...RequestOpt) (command discord.ApplicationCommand, err error) {
 	var unmarshalCommand discord.UnmarshalApplicationCommand
-	err = s.client.Do(CreateGlobalCommand.Compile(nil, applicationID), commandCreate, &command, opts...)
+	err = s.client.Do(CreateGlobalCommand.Compile(nil, applicationID), commandCreate, &unmarshalCommand, opts...)
 	if err == nil {
 		command = unmarshalCommand.ApplicationCommand
 	}

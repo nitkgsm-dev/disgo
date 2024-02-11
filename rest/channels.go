@@ -21,7 +21,7 @@ type Channels interface {
 	CreateWebhook(channelID snowflake.ID, webhookCreate discord.WebhookCreate, opts ...RequestOpt) (*discord.IncomingWebhook, error)
 
 	GetPermissionOverwrites(channelID snowflake.ID, opts ...RequestOpt) ([]discord.PermissionOverwrite, error)
-	GetPermissionOverwrite(channelID snowflake.ID, overwriteID snowflake.ID, opts ...RequestOpt) (*discord.PermissionOverwrite, error)
+	GetPermissionOverwrite(channelID snowflake.ID, overwriteID snowflake.ID, opts ...RequestOpt) (discord.PermissionOverwrite, error)
 	UpdatePermissionOverwrite(channelID snowflake.ID, overwriteID snowflake.ID, permissionOverwrite discord.PermissionOverwriteUpdate, opts ...RequestOpt) error
 	DeletePermissionOverwrite(channelID snowflake.ID, overwriteID snowflake.ID, opts ...RequestOpt) error
 
@@ -93,12 +93,23 @@ func (s *channelImpl) CreateWebhook(channelID snowflake.ID, webhookCreate discor
 }
 
 func (s *channelImpl) GetPermissionOverwrites(channelID snowflake.ID, opts ...RequestOpt) (overwrites []discord.PermissionOverwrite, err error) {
-	err = s.client.Do(GetPermissionOverwrites.Compile(nil, channelID), nil, &overwrites, opts...)
+	var pos []discord.UnmarshalPermissionOverwrite
+	err = s.client.Do(GetPermissionOverwrites.Compile(nil, channelID), nil, &pos, opts...)
+	if err == nil {
+		overwrites = make([]discord.PermissionOverwrite, len(pos))
+		for i := range pos {
+			overwrites[i] = pos[i].PermissionOverwrite
+		}
+	}
 	return
 }
 
-func (s *channelImpl) GetPermissionOverwrite(channelID snowflake.ID, overwriteID snowflake.ID, opts ...RequestOpt) (overwrite *discord.PermissionOverwrite, err error) {
-	err = s.client.Do(GetPermissionOverwrite.Compile(nil, channelID, overwriteID), nil, &overwrite, opts...)
+func (s *channelImpl) GetPermissionOverwrite(channelID snowflake.ID, overwriteID snowflake.ID, opts ...RequestOpt) (overwrite discord.PermissionOverwrite, err error) {
+	var unmarshalOverwrite discord.UnmarshalPermissionOverwrite
+	err = s.client.Do(GetPermissionOverwrite.Compile(nil, channelID, overwriteID), nil, &unmarshalOverwrite, opts...)
+	if err == nil {
+		overwrite = unmarshalOverwrite.PermissionOverwrite
+	}
 	return
 }
 
