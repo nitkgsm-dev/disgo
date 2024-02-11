@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/disgoorg/disgo/bot"
 	"github.com/disgoorg/json"
 	"github.com/disgoorg/snowflake/v2"
 
@@ -89,7 +88,7 @@ type MessageChannel interface {
 	Channel
 	Messenger
 
-	Webhook(client bot.Client) (WebhookMessenger, error)
+	Webhook(client ClientInterface) (WebhookMessenger, error)
 
 	// LastMessageID returns the ID of the last Message sent in this MessageChannel.
 	// This is nil if no Message has been sent yet.
@@ -253,19 +252,19 @@ type GuildTextChannel struct {
 	defaultAutoArchiveDuration AutoArchiveDuration
 }
 
-func (c GuildTextChannel) Webhook(client bot.Client) (WebhookMessenger, error) {
+func (c GuildTextChannel) Webhook(client ClientInterface) (WebhookMessenger, error) {
 	return NewChannelWebhookMessenger(client, c.ID())
 }
 
-func (c GuildTextChannel) Send(message MessageBuilder, client bot.Client) (*Message, error) {
+func (c GuildTextChannel) Send(message MessageBuilder, client ClientInterface) (*Message, error) {
 	return client.Rest().CreateMessage(c.ID(), message.BuildCreate())
 }
 
-func (c GuildTextChannel) Update(target Object, message MessageBuilder, client bot.Client) (*Message, error) {
+func (c GuildTextChannel) Update(target Object, message MessageBuilder, client ClientInterface) (*Message, error) {
 	return client.Rest().UpdateMessage(c.ID(), target.ID(), message.BuildUpdate())
 }
 
-func (c GuildTextChannel) Delete(message Object, client bot.Client) error {
+func (c GuildTextChannel) Delete(message Object, client ClientInterface) error {
 	return client.Rest().DeleteMessage(c.ID(), message.ID())
 }
 
@@ -389,19 +388,19 @@ type DMChannel struct {
 	lastPinTimestamp *time.Time
 }
 
-func (c DMChannel) Webhook(client bot.Client) (WebhookMessenger, error) {
+func (c DMChannel) Webhook(client ClientInterface) (WebhookMessenger, error) {
 	panic("unsupported operation: DMChannel does not support webhooks")
 }
 
-func (c DMChannel) Send(message MessageBuilder, client bot.Client) (*Message, error) {
+func (c DMChannel) Send(message MessageBuilder, client ClientInterface) (*Message, error) {
 	return client.Rest().CreateMessage(c.ID(), message.BuildCreate())
 }
 
-func (c DMChannel) Update(target Object, message MessageBuilder, client bot.Client) (*Message, error) {
+func (c DMChannel) Update(target Object, message MessageBuilder, client ClientInterface) (*Message, error) {
 	return client.Rest().UpdateMessage(c.ID(), target.ID(), message.BuildUpdate())
 }
 
-func (c DMChannel) Delete(message Object, client bot.Client) error {
+func (c DMChannel) Delete(message Object, client ClientInterface) error {
 	return client.Rest().DeleteMessage(c.ID(), message.ID())
 }
 
@@ -482,19 +481,19 @@ type GuildVoiceChannel struct {
 	rateLimitPerUser     int
 }
 
-func (c GuildVoiceChannel) Webhook(client bot.Client) (WebhookMessenger, error) {
+func (c GuildVoiceChannel) Webhook(client ClientInterface) (WebhookMessenger, error) {
 	return NewChannelWebhookMessenger(client, c.ID())
 }
 
-func (c GuildVoiceChannel) Send(message MessageBuilder, client bot.Client) (*Message, error) {
+func (c GuildVoiceChannel) Send(message MessageBuilder, client ClientInterface) (*Message, error) {
 	return client.Rest().CreateMessage(c.ID(), message.BuildCreate())
 }
 
-func (c GuildVoiceChannel) Update(target Object, message MessageBuilder, client bot.Client) (*Message, error) {
+func (c GuildVoiceChannel) Update(target Object, message MessageBuilder, client ClientInterface) (*Message, error) {
 	return client.Rest().UpdateMessage(c.ID(), target.ID(), message.BuildUpdate())
 }
 
-func (c GuildVoiceChannel) Delete(message Object, client bot.Client) error {
+func (c GuildVoiceChannel) Delete(message Object, client ClientInterface) error {
 	return client.Rest().DeleteMessage(c.ID(), message.ID())
 }
 
@@ -724,19 +723,19 @@ type GuildNewsChannel struct {
 	defaultAutoArchiveDuration AutoArchiveDuration
 }
 
-func (c GuildNewsChannel) Webhook(client bot.Client) (WebhookMessenger, error) {
+func (c GuildNewsChannel) Webhook(client ClientInterface) (WebhookMessenger, error) {
 	return NewChannelWebhookMessenger(client, c.ID())
 }
 
-func (c GuildNewsChannel) Send(message MessageBuilder, client bot.Client) (*Message, error) {
+func (c GuildNewsChannel) Send(message MessageBuilder, client ClientInterface) (*Message, error) {
 	return client.Rest().CreateMessage(c.ID(), message.BuildCreate())
 }
 
-func (c GuildNewsChannel) Update(target Object, message MessageBuilder, client bot.Client) (*Message, error) {
+func (c GuildNewsChannel) Update(target Object, message MessageBuilder, client ClientInterface) (*Message, error) {
 	return client.Rest().UpdateMessage(c.ID(), target.ID(), message.BuildUpdate())
 }
 
-func (c GuildNewsChannel) Delete(message Object, client bot.Client) error {
+func (c GuildNewsChannel) Delete(message Object, client ClientInterface) error {
 	return client.Rest().DeleteMessage(c.ID(), message.ID())
 }
 
@@ -873,19 +872,19 @@ type GuildThread struct {
 	ThreadMetadata   ThreadMetadata
 }
 
-func (c GuildThread) Webhook(client bot.Client) (WebhookMessenger, error) {
+func (c GuildThread) Webhook(client ClientInterface) (WebhookMessenger, error) {
 	return NewThreadWebhookMessenger(client, c.ID(), c.parentID)
 }
 
-func (c GuildThread) Send(message MessageBuilder, client bot.Client) (*Message, error) {
+func (c GuildThread) Send(message MessageBuilder, client ClientInterface) (*Message, error) {
 	return client.Rest().CreateMessage(c.ID(), message.BuildCreate())
 }
 
-func (c GuildThread) Update(target Object, message MessageBuilder, client bot.Client) (*Message, error) {
+func (c GuildThread) Update(target Object, message MessageBuilder, client ClientInterface) (*Message, error) {
 	return client.Rest().UpdateMessage(c.ID(), target.ID(), message.BuildUpdate())
 }
 
-func (c GuildThread) Delete(message Object, client bot.Client) error {
+func (c GuildThread) Delete(message Object, client ClientInterface) error {
 	return client.Rest().DeleteMessage(c.ID(), message.ID())
 }
 
@@ -1029,19 +1028,19 @@ type GuildStageVoiceChannel struct {
 	rateLimitPerUser     int
 }
 
-func (c *GuildStageVoiceChannel) Webhook(client bot.Client) (WebhookMessenger, error) {
+func (c *GuildStageVoiceChannel) Webhook(client ClientInterface) (WebhookMessenger, error) {
 	return NewChannelWebhookMessenger(client, c.ID())
 }
 
-func (c *GuildStageVoiceChannel) Send(message MessageBuilder, client bot.Client) (*Message, error) {
+func (c *GuildStageVoiceChannel) Send(message MessageBuilder, client ClientInterface) (*Message, error) {
 	return client.Rest().CreateMessage(c.ID(), message.BuildCreate())
 }
 
-func (c *GuildStageVoiceChannel) Update(target Object, message MessageBuilder, client bot.Client) (*Message, error) {
+func (c *GuildStageVoiceChannel) Update(target Object, message MessageBuilder, client ClientInterface) (*Message, error) {
 	return client.Rest().UpdateMessage(c.ID(), target.ID(), message.BuildUpdate())
 }
 
-func (c *GuildStageVoiceChannel) Delete(message Object, client bot.Client) error {
+func (c *GuildStageVoiceChannel) Delete(message Object, client ClientInterface) error {
 	return client.Rest().DeleteMessage(c.ID(), message.ID())
 }
 
