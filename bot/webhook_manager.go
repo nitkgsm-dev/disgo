@@ -36,7 +36,11 @@ func (w *webhookManagerImpl) GetMessenger(channel discord.Channel) (discord.Webh
 	if channel.Type() == discord.ChannelTypeGuildPublicThread ||
 		channel.Type() == discord.ChannelTypeGuildPrivateThread ||
 		channel.Type() == discord.ChannelTypeGuildNewsThread {
-		return NewThreadWebhookMessenger(w.client, channel.ID(), *channel.(*discord.GuildThread).ParentID())
+		c, ok := channel.(discord.GuildThread)
+		if ic, iok := channel.(discord.InteractionChannel); !ok && iok {
+			c = ic.MessageChannel.(discord.GuildThread)
+		}
+		return NewThreadWebhookMessenger(w.client, c.ID(), *c.ParentID())
 	}
 
 	return NewChannelWebhookMessenger(w.client, channel.ID())
