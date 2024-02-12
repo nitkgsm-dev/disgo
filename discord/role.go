@@ -47,6 +47,24 @@ func (r Role) CreatedAt() time.Time {
 	return r.ID.Time()
 }
 
+func (r Role) Compare(other Role) int {
+	if r.Position < other.Position {
+		return -1
+	}
+	if r.Position > other.Position {
+		return 1
+	}
+
+	if r.ID < other.ID {
+		return -1
+	}
+	if r.ID > other.ID {
+		return 1
+	}
+
+	return 0
+}
+
 // RoleTag are tags a Role has
 type RoleTag struct {
 	BotID                 *snowflake.ID `json:"bot_id,omitempty"`
