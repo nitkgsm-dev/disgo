@@ -1,7 +1,7 @@
 package discord
 
-type Messenger interface {
-	Send(message MessageBuilder, client ClientInterface) (*Message, error)
-	Update(target Object, message MessageBuilder, client ClientInterface) (*Message, error)
-	Delete(message Object, client ClientInterface) error
+type Messenger[T any] interface {
+	Send(message MessageBuilder, client T) (*Message, error)
+	Update(target Object, message MessageBuilder, client T) (*Message, error)
+	Delete(message Object, client T) error
 }

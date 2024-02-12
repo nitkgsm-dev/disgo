@@ -32,4 +32,6 @@ var (
 	ErrMemberMustBeConnectedToChannel = errors.New("the member must be connected to the channel")
 
 	ErrStickerTypeGuild = errors.New("sticker type must be of type StickerTypeGuild")
+
+	ErrUnsupportedType = errors.New("unsupported type")
 )

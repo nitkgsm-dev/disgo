@@ -70,8 +70,8 @@ type MessageBuilder interface {
 
 	BuildCreate() MessageCreate
 	BuildUpdate() MessageUpdate
-	buildWebhookCreate(username string, avatarURL string, threadName string) WebhookMessageCreate
-	buildWebhookUpdate() WebhookMessageUpdate
+	BuildWebhookCreate(username string, avatarURL string, threadName string) WebhookMessageCreate
+	BuildWebhookUpdate() WebhookMessageUpdate
 
 	messageBuilder()
 }
@@ -354,7 +354,7 @@ func (m *messageBuilderImpl) BuildUpdate() MessageUpdate {
 	}
 }
 
-func (m *messageBuilderImpl) buildWebhookCreate(username string, avatarURL string, threadName string) WebhookMessageCreate {
+func (m *messageBuilderImpl) BuildWebhookCreate(username string, avatarURL string, threadName string) WebhookMessageCreate {
 	return WebhookMessageCreate{
 		Content:         nillabe.NonNil(m.Content),
 		Username:        username,
@@ -369,7 +369,7 @@ func (m *messageBuilderImpl) buildWebhookCreate(username string, avatarURL strin
 	}
 }
 
-func (m *messageBuilderImpl) buildWebhookUpdate() WebhookMessageUpdate {
+func (m *messageBuilderImpl) BuildWebhookUpdate() WebhookMessageUpdate {
 	return WebhookMessageUpdate{
 		Content:         m.Content,
 		Embeds:          m.Embeds,

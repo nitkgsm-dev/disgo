@@ -109,6 +109,8 @@ type Client interface {
 
 	// HasHTTPServer returns whether the Client has a configured HTTPServer.
 	HasHTTPServer() bool
+
+	WebhookManager() WebhookManager
 }
 
 type clientImpl struct {
@@ -131,6 +133,8 @@ type clientImpl struct {
 	caches cache.Caches
 
 	memberChunkingManager MemberChunkingManager
+
+	webhookManager WebhookManager
 }
 
 func (c *clientImpl) Logger() *slog.Logger {
@@ -325,4 +329,8 @@ func (c *clientImpl) HTTPServer() httpserver.Server {
 
 func (c *clientImpl) HasHTTPServer() bool {
 	return c.httpServer != nil
+}
+
+func (c *clientImpl) WebhookManager() WebhookManager {
+	return c.webhookManager
 }

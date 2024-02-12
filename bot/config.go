@@ -52,6 +52,8 @@ type Config struct {
 
 	MemberChunkingManager MemberChunkingManager
 	MemberChunkingFilter  MemberChunkingFilter
+
+	WebhookManager WebhookManager
 }
 
 // ConfigOpt is a type alias for a function that takes a Config and is used to configure your Client.
@@ -208,6 +210,12 @@ func WithMemberChunkingFilter(memberChunkingFilter MemberChunkingFilter) ConfigO
 	}
 }
 
+func WithWebhookManager(webhookManager WebhookManager) ConfigOpt {
+	return func(config *Config) {
+		config.WebhookManager = webhookManager
+	}
+}
+
 // BuildClient creates a new Client instance with the given token, Config, gateway handlers, http handlers os, name, github & version.
 func BuildClient(token string, cfg *Config, gatewayEventHandlerFunc func(client Client) gateway.EventHandlerFunc, httpServerEventHandlerFunc func(client Client) httpserver.EventHandlerFunc, os string, name string, github string, version string) (Client, error) {
 	if token == "" {
@@ -322,6 +330,11 @@ func BuildClient(token string, cfg *Config, gatewayEventHandlerFunc func(client 
 		cfg.MemberChunkingManager = NewMemberChunkingManager(client, cfg.Logger, cfg.MemberChunkingFilter)
 	}
 	client.memberChunkingManager = cfg.MemberChunkingManager
+
+	if cfg.WebhookManager == nil {
+		cfg.WebhookManager = NewWebhookManager(client, cfg.Logger)
+	}
+	client.webhookManager = cfg.WebhookManager
 
 	if cfg.Caches == nil {
 		cfg.Caches = cache.New(cfg.CacheConfigOpts...)
