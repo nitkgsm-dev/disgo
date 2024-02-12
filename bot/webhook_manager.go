@@ -40,7 +40,7 @@ func (w *webhookManagerImpl) GetMessenger(channel discord.Channel) (discord.Webh
 		if ic, iok := channel.(discord.InteractionChannel); !ok && iok {
 			c = ic.MessageChannel.(discord.GuildThread)
 		}
-		return NewThreadWebhookMessenger(w.client, c.ID(), *c.ParentID())
+		return NewThreadWebhookMessenger(w.client, *c.ParentID(), c.ID())
 	}
 
 	return NewChannelWebhookMessenger(w.client, channel.ID())
@@ -105,25 +105,25 @@ func (c channelWebhookMessenger) Delete(message discord.Object, client Client) e
 	return client.Rest().DeleteWebhookMessage(c.webhook.ID(), c.webhook.Token, message.ID(), 0)
 }
 
-func NewThreadWebhookMessenger(client Client, channelID, threadID snowflake.ID) (discord.WebhookMessenger[Client], error) {
-	webhooks, err := client.Rest().GetWebhooks(channelID)
+func NewThreadWebhookMessenger(client Client, parentID, threadID snowflake.ID) (discord.WebhookMessenger[Client], error) {
+	webhooks, err := client.Rest().GetWebhooks(parentID)
 	if err != nil {
 		return nil, err
 	}
 
 	for _, webhook := range webhooks {
 		if webhook.Type() == discord.WebhookTypeIncoming && webhook.(discord.IncomingWebhook).User.ID == client.ApplicationID() {
-			return threadWebhookMessenger{channelID: channelID, threadID: threadID, webhook: webhook.(discord.IncomingWebhook)}, nil
+			return threadWebhookMessenger{channelID: parentID, threadID: threadID, webhook: webhook.(discord.IncomingWebhook)}, nil
 		}
 	}
 
-	webhook, err := client.Rest().CreateWebhook(channelID, discord.WebhookCreate{
+	webhook, err := client.Rest().CreateWebhook(parentID, discord.WebhookCreate{
 		Name: WebhookDefaultName,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return threadWebhookMessenger{channelID: channelID, threadID: threadID, webhook: *webhook}, nil
+	return threadWebhookMessenger{channelID: parentID, threadID: threadID, webhook: *webhook}, nil
 }
 
 type threadWebhookMessenger struct {
