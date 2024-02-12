@@ -62,7 +62,7 @@ func NewChannelWebhookMessenger(client Client, channelID snowflake.ID) (discord.
 	}
 
 	for _, webhook := range webhooks {
-		if webhook.Type() == discord.WebhookTypeIncoming && webhook.(*discord.IncomingWebhook).User.ID == client.ApplicationID() {
+		if webhook.Type() == discord.WebhookTypeIncoming && webhook.(discord.IncomingWebhook).User.ID == client.ApplicationID() {
 			return channelWebhookMessenger{channelID: channelID, webhook: webhook.(discord.IncomingWebhook)}, nil
 		}
 	}
@@ -108,7 +108,7 @@ func NewThreadWebhookMessenger(client Client, channelID, threadID snowflake.ID) 
 	}
 
 	for _, webhook := range webhooks {
-		if webhook.Type() == discord.WebhookTypeIncoming && webhook.(*discord.IncomingWebhook).User.ID == client.ApplicationID() {
+		if webhook.Type() == discord.WebhookTypeIncoming && webhook.(discord.IncomingWebhook).User.ID == client.ApplicationID() {
 			return threadWebhookMessenger{channelID: channelID, threadID: threadID, webhook: webhook.(discord.IncomingWebhook)}, nil
 		}
 	}
