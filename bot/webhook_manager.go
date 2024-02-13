@@ -104,12 +104,12 @@ func (c channelWebhookMessenger) Send(message discord.MessageBuilder) (*discord.
 	return c.SendWebhook(message, "", "", "")
 }
 
-func (c channelWebhookMessenger) Update(target discord.Object, message discord.MessageBuilder) (*discord.Message, error) {
-	return c.client.Rest().UpdateWebhookMessage(c.webhook.ID(), c.webhook.Token, target.ID(), message.BuildWebhookUpdate(), 0)
+func (c channelWebhookMessenger) Update(target snowflake.ID, message discord.MessageBuilder) (*discord.Message, error) {
+	return c.client.Rest().UpdateWebhookMessage(c.webhook.ID(), c.webhook.Token, target, message.BuildWebhookUpdate(), 0)
 }
 
-func (c channelWebhookMessenger) Delete(message discord.Object) error {
-	return c.client.Rest().DeleteWebhookMessage(c.webhook.ID(), c.webhook.Token, message.ID(), 0)
+func (c channelWebhookMessenger) Delete(message snowflake.ID) error {
+	return c.client.Rest().DeleteWebhookMessage(c.webhook.ID(), c.webhook.Token, message, 0)
 }
 
 func NewThreadWebhookMessenger(client Client, parentID, threadID snowflake.ID) (discord.WebhookMessenger, error) {
@@ -153,10 +153,10 @@ func (t threadWebhookMessenger) Send(message discord.MessageBuilder) (*discord.M
 	return t.SendWebhook(message, "", "", "")
 }
 
-func (t threadWebhookMessenger) Update(target discord.Object, message discord.MessageBuilder) (*discord.Message, error) {
-	return t.client.Rest().UpdateWebhookMessage(t.webhook.ID(), t.webhook.Token, target.ID(), message.BuildWebhookUpdate(), t.threadID)
+func (t threadWebhookMessenger) Update(target snowflake.ID, message discord.MessageBuilder) (*discord.Message, error) {
+	return t.client.Rest().UpdateWebhookMessage(t.webhook.ID(), t.webhook.Token, target, message.BuildWebhookUpdate(), t.threadID)
 }
 
-func (t threadWebhookMessenger) Delete(message discord.Object) error {
-	return t.client.Rest().DeleteWebhookMessage(t.webhook.ID(), t.webhook.Token, message.ID(), t.threadID)
+func (t threadWebhookMessenger) Delete(message snowflake.ID) error {
+	return t.client.Rest().DeleteWebhookMessage(t.webhook.ID(), t.webhook.Token, message, t.threadID)
 }

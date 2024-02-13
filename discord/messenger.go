@@ -1,7 +1,9 @@
 package discord
 
+import "github.com/disgoorg/snowflake/v2"
+
 type Messenger interface {
 	Send(message MessageBuilder) (*Message, error)
-	Update(target Object, message MessageBuilder) (*Message, error)
-	Delete(message Object) error
+	Update(target snowflake.ID, message MessageBuilder) (*Message, error)
+	Delete(message snowflake.ID) error
 }
