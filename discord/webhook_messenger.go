@@ -1,7 +1,7 @@
 package discord
 
-type WebhookMessenger[T any] interface {
-	Messenger[T]
+type WebhookMessenger interface {
+	Messenger
 	Webhook() Webhook
-	SendWebhook(message MessageBuilder, client T, username, avatarURL, threadName string) (*Message, error)
+	SendWebhook(message MessageBuilder, username, avatarURL, threadName string) (*Message, error)
 }
