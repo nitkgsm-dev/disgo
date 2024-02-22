@@ -1,19 +1,13 @@
-package nillabe
+package nillable
 
 import "reflect"
-
-func Nillable[T any](t *T) *T {
-	if t == nil {
-		return nil
-	}
-	return t
-}
 
 func NonNil[T any](t *T) T {
 	if t != nil {
 		return *t
 	}
-	return *new(T)
+	var zero T
+	return zero
 }
 
 func RequireNonNil[T any](t *T) T {

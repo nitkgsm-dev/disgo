@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/disgoorg/disgo/internal/nillabe"
+	"github.com/disgoorg/disgo/internal/nillable"
 	"github.com/disgoorg/snowflake/v2"
 )
 
@@ -63,6 +63,7 @@ type MessageBuilder interface {
 	ClearFlags() MessageBuilder
 	SetEphemeral(ephemeral bool) MessageBuilder
 	SetSuppressEmbeds(suppressEmbeds bool) MessageBuilder
+	SetEnforceNonce(enforceNonce bool) MessageBuilder
 
 	ClearContent() MessageBuilder
 	RetainAttachments(attachments ...Attachment) MessageBuilder
@@ -88,6 +89,12 @@ type messageBuilderImpl struct {
 	Files            []*File               `json:"-"`
 	AllowedMentions  *AllowedMentions      `json:"allowed_mentions,omitempty"`
 	Flags            *MessageFlags         `json:"flags,omitempty"`
+	EnforceNonce     bool                  `json:"enforce_nonce,omitempty"`
+}
+
+func (m *messageBuilderImpl) SetEnforceNonce(enforceNonce bool) MessageBuilder {
+	m.EnforceNonce = enforceNonce
+	return m
 }
 
 func (m *messageBuilderImpl) SetContent(content string) MessageBuilder {
@@ -329,16 +336,17 @@ func (m *messageBuilderImpl) BuildCreate() MessageCreate {
 	attachments = parseAttachments(m.Files)
 	return MessageCreate{
 		Nonce:            m.Nonce,
-		Content:          nillabe.NonNil(m.Content),
+		Content:          nillable.NonNil(m.Content),
 		TTS:              m.TTS,
-		Embeds:           nillabe.NonNil(m.Embeds),
-		Components:       nillabe.NonNil(m.Components),
+		Embeds:           nillable.NonNil(m.Embeds),
+		Components:       nillable.NonNil(m.Components),
 		StickerIDs:       m.StickerIDs,
 		Files:            m.Files,
 		Attachments:      attachments,
 		AllowedMentions:  m.AllowedMentions,
 		MessageReference: m.MessageReference,
-		Flags:            nillabe.NonNil(m.Flags),
+		Flags:            nillable.NonNil(m.Flags),
+		EnforceNonce:     m.EnforceNonce,
 	}
 }
 
@@ -356,15 +364,15 @@ func (m *messageBuilderImpl) BuildUpdate() MessageUpdate {
 
 func (m *messageBuilderImpl) BuildWebhookCreate(username string, avatarURL string, threadName string) WebhookMessageCreate {
 	return WebhookMessageCreate{
-		Content:         nillabe.NonNil(m.Content),
+		Content:         nillable.NonNil(m.Content),
 		Username:        username,
 		AvatarURL:       avatarURL,
 		TTS:             m.TTS,
-		Embeds:          nillabe.NonNil(m.Embeds),
-		Components:      nillabe.NonNil(m.Components),
+		Embeds:          nillable.NonNil(m.Embeds),
+		Components:      nillable.NonNil(m.Components),
 		Files:           m.Files,
 		AllowedMentions: m.AllowedMentions,
-		Flags:           nillabe.NonNil(m.Flags),
+		Flags:           nillable.NonNil(m.Flags),
 		ThreadName:      threadName,
 	}
 }
