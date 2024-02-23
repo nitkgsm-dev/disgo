@@ -143,6 +143,11 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Builder returns a new MessageBuilder to edit this Message
+func (m Message) Builder() MessageBuilder {
+	return NewMessageBuilderFromMessage(m)
+}
+
 // ActionRows returns all ActionRowComponent(s) from this Message
 func (m Message) ActionRows() []ActionRowComponent {
 	var actionRows []ActionRowComponent

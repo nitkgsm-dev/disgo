@@ -9,7 +9,9 @@ import (
 )
 
 func NewMessageBuilder() MessageBuilder {
-	return &messageBuilderImpl{}
+	return &messageBuilderImpl{
+		AllowedMentions: &DefaultAllowedMentions,
+	}
 }
 
 func NewMessageBuilderFromMessage(message Message) MessageBuilder {
