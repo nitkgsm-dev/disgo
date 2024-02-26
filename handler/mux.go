@@ -224,6 +224,12 @@ func (r *Mux) Error(h ErrorHandler) {
 	r.errorHandler = h
 }
 
+// DefaultContext sets the default context for this router.
+// This context will be used for all interaction events.
+func (r *Mux) DefaultContext(fn func() context.Context) {
+	r.defaultContext = fn
+}
+
 func checkPattern(pattern string) {
 	if len(pattern) == 0 {
 		panic("pattern must not be empty")
